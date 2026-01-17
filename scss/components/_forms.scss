@@ -1,0 +1,305 @@
+// ==============================================
+// FORMS COMPONENT
+// ==============================================
+
+@use '../variables' as *;
+@use '../mixins' as *;
+
+// ---------------------------------------------
+// Form Group
+// ---------------------------------------------
+.form-group {
+  margin-bottom: $spacing-5;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-label {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $gray-700;
+  margin-bottom: $spacing-2;
+
+  &--required::after {
+    content: ' *';
+    color: $error-color;
+  }
+}
+
+.form-hint {
+  font-size: $font-size-sm;
+  color: $gray-500;
+  margin-top: $spacing-2;
+}
+
+.form-error {
+  font-size: $font-size-sm;
+  color: $error-color;
+  margin-top: $spacing-2;
+}
+
+// ---------------------------------------------
+// Input
+// ---------------------------------------------
+.form-input {
+  @include input-base;
+
+  &--error {
+    border-color: $error-color;
+
+    &:focus {
+      border-color: $error-color;
+      box-shadow: 0 0 0 3px rgba($error-color, 0.1);
+    }
+  }
+
+  &--success {
+    border-color: $success-color;
+
+    &:focus {
+      border-color: $success-color;
+      box-shadow: 0 0 0 3px rgba($success-color, 0.1);
+    }
+  }
+}
+
+// Input with icon
+.input-icon-wrapper {
+  position: relative;
+
+  .form-input {
+    padding-left: $spacing-10;
+  }
+
+  &__icon {
+    position: absolute;
+    left: $spacing-3;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $gray-400;
+    pointer-events: none;
+
+    svg, i {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  // Right icon (e.g., password toggle)
+  &--right {
+    .form-input {
+      padding-left: $spacing-4;
+      padding-right: $spacing-10;
+    }
+
+    .input-icon-wrapper__icon {
+      left: auto;
+      right: $spacing-3;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+  }
+}
+
+// ---------------------------------------------
+// Textarea
+// ---------------------------------------------
+.form-textarea {
+  @include input-base;
+  min-height: 120px;
+  resize: vertical;
+}
+
+// ---------------------------------------------
+// Select
+// ---------------------------------------------
+.form-select {
+  @include input-base;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $spacing-3 center;
+  background-size: 20px;
+  padding-right: $spacing-10;
+  cursor: pointer;
+}
+
+// ---------------------------------------------
+// Checkbox & Radio
+// ---------------------------------------------
+.form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-3;
+  cursor: pointer;
+
+  &__input {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    appearance: none;
+    border: 2px solid $gray-300;
+    background-color: $white;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &[type="checkbox"] {
+      border-radius: $radius-sm;
+    }
+
+    &[type="radio"] {
+      border-radius: $radius-full;
+    }
+
+    &:checked {
+      background-color: $primary-color;
+      border-color: $primary-color;
+    }
+
+    &:checked[type="checkbox"] {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white' stroke-width='3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M5 13l4 4L19 7'%3E%3C/path%3E%3C/svg%3E");
+      background-size: 14px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    &:checked[type="radio"] {
+      background-image: url("data:image/svg+xml,%3Ccircle xmlns='http://www.w3.org/2000/svg' cx='12' cy='12' r='5' fill='white'/%3E");
+      background-size: 10px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
+    }
+
+    &:disabled {
+      background-color: $gray-100;
+      cursor: not-allowed;
+    }
+  }
+
+  &__label {
+    font-size: $font-size-base;
+    color: $gray-700;
+    line-height: $line-height-normal;
+  }
+}
+
+// ---------------------------------------------
+// Bid Input (Special)
+// ---------------------------------------------
+.bid-input {
+  position: relative;
+
+  &__prefix {
+    position: absolute;
+    left: $spacing-4;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $gray-500;
+  }
+
+  input {
+    padding-left: $spacing-8;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    text-align: right;
+
+    &:focus {
+      border-color: $accent-color;
+      box-shadow: 0 0 0 3px rgba($accent-color, 0.2);
+    }
+  }
+}
+
+// ---------------------------------------------
+// Search Input
+// ---------------------------------------------
+.search-input {
+  position: relative;
+
+  input {
+    padding-left: $spacing-12;
+    padding-right: $spacing-12;
+    border-radius: $radius-full;
+    background-color: $gray-100;
+    border-color: transparent;
+
+    &:focus {
+      background-color: $white;
+      border-color: $primary-light;
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    left: $spacing-4;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $gray-400;
+
+    svg, i {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__clear {
+    position: absolute;
+    right: $spacing-4;
+    top: 50%;
+    transform: translateY(-50%);
+    @include flex-center;
+    width: 24px;
+    height: 24px;
+    background-color: $gray-300;
+    border-radius: $radius-full;
+    color: $white;
+    opacity: 0;
+    visibility: hidden;
+    transition: all $transition-fast;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $gray-400;
+    }
+
+    svg, i {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  input:not(:placeholder-shown) + .search-input__icon + .search-input__clear,
+  input:focus:not(:placeholder-shown) ~ .search-input__clear {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// ---------------------------------------------
+// Form Row (Inline fields)
+// ---------------------------------------------
+.form-row {
+  display: grid;
+  gap: $spacing-4;
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &--3 {
+    @include lg {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}

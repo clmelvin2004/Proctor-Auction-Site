@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Auction | Almost Heaven Auctions LLC</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="live-auction">
+    <!-- Registration Modal (shown first) -->
+    <div id="registration-modal" class="registration-modal">
+        <div class="registration-card">
+            <h1 class="registration-card__title">Welcome to the Live Auction!</h1>
+            <p class="registration-card__subtitle">Enter your bidder number to join</p>
+            
+            <form id="register-form" class="registration-form">
+                <input 
+                    type="text" 
+                    id="bidder-number" 
+                    class="registration-input"
+                    placeholder="Your Bidder Number"
+                    required
+                    autocomplete="off"
+                    aria-label="Enter your bidder number"
+                >
+                <input 
+                    type="text" 
+                    id="bidder-name" 
+                    class="registration-input"
+                    placeholder="Your Name"
+                    required
+                    autocomplete="off"
+                    aria-label="Enter your name"
+                >
+                <button type="submit" class="registration-btn">
+                    Join Auction
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Auction Interface (shown after registration) -->
+    <div id="auction-interface" style="display: none;">
+        <!-- Header -->
+        <header class="auction-header">
+            <div class="auction-header__inner">
+                <div class="auction-header__brand">
+                    <h1 class="auction-header__title">Almost Heaven Auctions</h1>
+                    <span class="auction-header__subtitle">Live Bidding</span>
+                </div>
+                <div class="auction-header__user">
+                    <div id="connection-badge" class="connection-badge connection-badge--disconnected">
+                        <span class="connection-badge__dot"></span>
+                        <span id="connection-text">Connecting...</span>
+                    </div>
+                    <div id="bidder-info" class="bidder-number">
+                        Bidder #<span id="display-bidder-number">---</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="auction-main">
+            <!-- Status Message -->
+            <div id="auction-status" class="auction-status auction-status--waiting">
+                <span id="status-text">Waiting for auction to start...</span>
+            </div>
+
+            <!-- No Active Lot (shown when waiting) -->
+            <div id="no-lot-display" class="no-active-lot">
+                <div class="no-active-lot__icon">🔔</div>
+                <h2 class="no-active-lot__title">Auction Not Active</h2>
+                <p class="no-active-lot__text">
+                    Please wait for the auctioneer to start the auction. 
+                    You'll see the current lot appear here when bidding begins.
+                </p>
+            </div>
+
+            <!-- Current Lot Display (shown during auction) -->
+            <div id="lot-display" class="current-lot-display" style="display: none;">
+                <span class="lot-label">Now Selling</span>
+                <h2 id="lot-number" class="lot-number">Lot 1</h2>
+                <p id="lot-description" class="lot-description">Item description will appear here</p>
+                
+                <div class="current-bid-display">
+                    <span class="bid-label">Current Bid</span>
+                    <div id="current-bid" class="bid-amount">$0</div>
+                    <div id="bid-status-text" class="bid-status"></div>
+                </div>
+            </div>
+
+            <!-- Bidding Controls (shown during auction) -->
+            <div id="bidding-controls" class="bidding-controls" style="display: none;">
+                <div class="bid-input-group">
+                    <label class="bid-input-label" for="bid-amount">Your Bid Amount</label>
+                    <div class="bid-input-wrapper">
+                        <input 
+                            type="number" 
+                            id="bid-amount" 
+                            class="bid-input"
+                            placeholder="$0"
+                            min="0"
+                            step="5"
+                            aria-label="Enter your bid amount"
+                        >
+                    </div>
+                </div>
+
+                <div class="quick-bid-buttons">
+                    <button type="button" class="quick-bid-btn" data-increment="5">+ $5</button>
+                    <button type="button" class="quick-bid-btn" data-increment="10">+ $10</button>
+                    <button type="button" class="quick-bid-btn" data-increment="25">+ $25</button>
+                    <button type="button" class="quick-bid-btn" data-increment="50">+ $50</button>
+                    <button type="button" class="quick-bid-btn" data-increment="100">+ $100</button>
+                </div>
+
+                <button type="button" id="place-bid-btn" class="place-bid-btn" disabled>
+                    Place Bid
+                </button>
+            </div>
+
+            <!-- Bid History -->
+            <div id="bid-history" class="bid-history" style="display: none;">
+                <h3 class="bid-history__title">
+                    📋 Recent Bids
+                </h3>
+                <div id="bid-history-list" class="bid-history-list">
+                    <!-- Bid items inserted here -->
+                </div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="auction-help">
+                <h3 class="auction-help__title">
+                    ❓ How to Bid
+                </h3>
+                <ul class="auction-help__list">
+                    <li>Enter your bid amount or use the quick-add buttons</li>
+                    <li>Click the green "Place Bid" button to submit</li>
+                    <li>Wait for the auctioneer to accept your bid</li>
+                    <li>You'll see a message if you're the winning bidder</li>
+                    <li>10% buyer's premium applies to all purchases</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="bidder-toast"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // ===========================================
+        // STATE
+        // ===========================================
+        let socket = null;
+        let bidder = null;
+        let currentBid = 0;
+        let bidIncrement = 5;
+        let isAuctionLive = false;
+        let myBidderNumber = null;
+
+        // ===========================================
+        // DOM ELEMENTS
+        // ===========================================
+        const elements = {
+            // Registration
+            registrationModal: document.getElementById('registration-modal'),
+            registerForm: document.getElementById('register-form'),
+            bidderNumberInput: document.getElementById('bidder-number'),
+            bidderNameInput: document.getElementById('bidder-name'),
+            
+            // Main Interface
+            auctionInterface: document.getElementById('auction-interface'),
+            connectionBadge: document.getElementById('connection-badge'),
+            connectionText: document.getElementById('connection-text'),
+            displayBidderNumber: document.getElementById('display-bidder-number'),
+            
+            // Status & Display
+            auctionStatus: document.getElementById('auction-status'),
+            statusText: document.getElementById('status-text'),
+            noLotDisplay: document.getElementById('no-lot-display'),
+            lotDisplay: document.getElementById('lot-display'),
+            lotNumber: document.getElementById('lot-number'),
+            lotDescription: document.getElementById('lot-description'),
+            currentBidDisplay: document.getElementById('current-bid'),
+            bidStatusText: document.getElementById('bid-status-text'),
+            
+            // Bidding
+            biddingControls: document.getElementById('bidding-controls'),
+            bidAmountInput: document.getElementById('bid-amount'),
+            placeBidBtn: document.getElementById('place-bid-btn'),
+            
+            // History
+            bidHistory: document.getElementById('bid-history'),
+            bidHistoryList: document.getElementById('bid-history-list'),
+            
+            // Toast
+            toastContainer: document.getElementById('toast-container')
+        };
+
+        // ===========================================
+        // INITIALIZATION
+        // ===========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSocket();
+            setupEventListeners();
+            
+            // Check for saved session
+            const savedBidder = sessionStorage.getItem('bidder');
+            if (savedBidder) {
+                bidder = JSON.parse(savedBidder);
+                myBidderNumber = bidder.bidderNumber;
+                showAuctionInterface();
+            }
+        });
+
+        // ===========================================
+        // SOCKET CONNECTION
+        // ===========================================
+        function initializeSocket() {
+            socket = io();
+
+            socket.on('connect', () => {
+                updateConnectionStatus(true);
+                
+                // Re-register if we have bidder info
+                if (bidder) {
+                    socket.emit('register:bidder', bidder);
+                }
+            });
+
+            socket.on('disconnect', () => {
+                updateConnectionStatus(false);
+            });
+
+            // Registration confirmed
+            socket.on('registration:confirmed', (data) => {
+                showToast('You are registered and ready to bid!', 'success');
+            });
+
+            // Auction state updates
+            socket.on('auction:state', (state) => {
+                isAuctionLive = state.isLive;
+                currentBid = state.currentBid || 0;
+                bidIncrement = state.bidIncrement || 5;
+                
+                if (state.isLive && state.currentLot) {
+                    showAuctionActive(state.currentLot);
+                } else {
+                    showAuctionWaiting();
+                }
+            });
+
+            socket.on('auction:started', (data) => {
+                isAuctionLive = true;
+                currentBid = data.startingBid || 0;
+                bidIncrement = data.bidIncrement || 5;
+                
+                showAuctionActive(data.lot);
+                showToast('🔔 Auction is now LIVE!', 'info');
+            });
+
+            socket.on('auction:lotChanged', (data) => {
+                currentBid = data.currentBid || data.startingBid || 0;
+                bidIncrement = data.bidIncrement || 5;
+                
+                updateLotDisplay(data.lot);
+                updateBidDisplay(currentBid);
+                clearBidHistory();
+                showToast(`Now selling: Lot ${data.lot.number}`, 'info');
+            });
+
+            socket.on('auction:bidUpdate', (data) => {
+                currentBid = data.currentBid;
+                updateBidDisplay(currentBid);
+                
+                const isMyBid = data.bidderNumber === myBidderNumber;
+                const isOnline = data.source === 'online';
+                
+                addBidToHistory(data.currentBid, data.bidderName || 'Floor', isOnline, isMyBid);
+                
+                if (isMyBid) {
+                    updateBidStatus('winning', "You're the high bidder!");
+                } else if (data.source === 'online') {
+                    updateBidStatus('outbid', 'You have been outbid');
+                }
+            });
+
+            socket.on('auction:lotSold', (data) => {
+                const isWinner = data.winnerBidderNumber === myBidderNumber;
+                
+                if (isWinner) {
+                    showToast(`🎉 Congratulations! You won Lot ${data.lot?.number} for $${data.winningBid}!`, 'success');
+                } else {
+                    showToast(`SOLD! Lot ${data.lot?.number} sold for $${data.winningBid}`, 'info');
+                }
+                
+                updateBidStatus('', '');
+            });
+
+            socket.on('auction:ended', (data) => {
+                isAuctionLive = false;
+                showAuctionWaiting();
+                showToast(data.message || 'Auction has ended', 'info');
+            });
+
+            // Bid responses
+            socket.on('bid:confirmed', (data) => {
+                updateBidStatus('pending', 'Bid submitted - waiting for auctioneer...');
+                elements.placeBidBtn.disabled = true;
+                elements.placeBidBtn.textContent = 'Bid Pending...';
+            });
+
+            socket.on('bid:accepted', (data) => {
+                updateBidStatus('winning', `✓ Your bid of $${data.bid.amount} was accepted!`);
+                elements.placeBidBtn.disabled = false;
+                elements.placeBidBtn.textContent = 'Place Bid';
+                showToast('🎉 Your bid was accepted!', 'success');
+            });
+
+            socket.on('bid:rejected', (data) => {
+                updateBidStatus('outbid', `✗ Bid rejected: ${data.reason || 'Please try a higher amount'}`);
+                elements.placeBidBtn.disabled = false;
+                elements.placeBidBtn.textContent = 'Place Bid';
+                showToast('Bid was not accepted', 'warning');
+            });
+
+            socket.on('bid:error', (data) => {
+                elements.placeBidBtn.disabled = false;
+                elements.placeBidBtn.textContent = 'Place Bid';
+                showToast(data.message, 'error');
+            });
+        }
+
+        function updateConnectionStatus(connected) {
+            if (connected) {
+                elements.connectionBadge.className = 'connection-badge connection-badge--connected';
+                elements.connectionText.textContent = 'Connected';
+            } else {
+                elements.connectionBadge.className = 'connection-badge connection-badge--disconnected';
+                elements.connectionText.textContent = 'Reconnecting...';
+            }
+        }
+
+        // ===========================================
+        // EVENT LISTENERS
+        // ===========================================
+        function setupEventListeners() {
+            // Registration form
+            elements.registerForm.addEventListener('submit', handleRegister);
+
+            // Quick bid buttons
+            document.querySelectorAll('.quick-bid-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const increment = parseInt(btn.dataset.increment);
+                    const currentValue = parseInt(elements.bidAmountInput.value) || currentBid;
+                    elements.bidAmountInput.value = currentValue + increment;
+                    updateSubmitButton();
+                });
+            });
+
+            // Bid amount input
+            elements.bidAmountInput.addEventListener('input', updateSubmitButton);
+
+            // Submit bid
+            elements.placeBidBtn.addEventListener('click', handleSubmitBid);
+
+            // Enter key to submit
+            elements.bidAmountInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !elements.placeBidBtn.disabled) {
+                    handleSubmitBid();
+                }
+            });
+        }
+
+        // ===========================================
+        // REGISTRATION
+        // ===========================================
+        function handleRegister(e) {
+            e.preventDefault();
+
+            const bidderNumber = elements.bidderNumberInput.value.trim();
+            const name = elements.bidderNameInput.value.trim();
+
+            if (!bidderNumber || !name) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+
+            bidder = {
+                bidderNumber: bidderNumber,
+                name: name,
+                type: 'online'
+            };
+            
+            myBidderNumber = bidderNumber;
+
+            // Save to session
+            sessionStorage.setItem('bidder', JSON.stringify(bidder));
+
+            // Register with server
+            if (socket && socket.connected) {
+                socket.emit('register:bidder', bidder);
+            }
+
+            showAuctionInterface();
+        }
+
+        function showAuctionInterface() {
+            elements.registrationModal.style.display = 'none';
+            elements.auctionInterface.style.display = 'block';
+            elements.displayBidderNumber.textContent = bidder.bidderNumber;
+        }
+
+        // ===========================================
+        // DISPLAY FUNCTIONS
+        // ===========================================
+        function showAuctionWaiting() {
+            elements.auctionStatus.className = 'auction-status auction-status--waiting';
+            elements.statusText.textContent = 'Waiting for auction to start...';
+            
+            elements.noLotDisplay.style.display = 'block';
+            elements.lotDisplay.style.display = 'none';
+            elements.biddingControls.style.display = 'none';
+            elements.bidHistory.style.display = 'none';
+        }
+
+        function showAuctionActive(lot) {
+            elements.auctionStatus.className = 'auction-status auction-status--active';
+            elements.statusText.textContent = '🔴 LIVE - Bidding is open!';
+            
+            elements.noLotDisplay.style.display = 'none';
+            elements.lotDisplay.style.display = 'block';
+            elements.biddingControls.style.display = 'block';
+            elements.bidHistory.style.display = 'block';
+            
+            updateLotDisplay(lot);
+            updateBidDisplay(currentBid);
+            
+            // Set initial bid amount
+            elements.bidAmountInput.value = currentBid + bidIncrement;
+            updateSubmitButton();
+        }
+
+        function updateLotDisplay(lot) {
+            elements.lotNumber.textContent = `Lot ${lot.number}`;
+            elements.lotDescription.textContent = lot.description || 'No description available';
+        }
+
+        function updateBidDisplay(amount) {
+            elements.currentBidDisplay.textContent = formatCurrency(amount);
+        }
+
+        function updateBidStatus(type, message) {
+            elements.bidStatusText.textContent = message;
+            elements.bidStatusText.className = 'bid-status';
+            
+            if (type === 'winning') {
+                elements.bidStatusText.classList.add('bid-status--winning');
+            } else if (type === 'outbid') {
+                elements.bidStatusText.classList.add('bid-status--outbid');
+            }
+        }
+
+        function updateSubmitButton() {
+            const bidAmount = parseInt(elements.bidAmountInput.value) || 0;
+            const minimumBid = currentBid + bidIncrement;
+            
+            elements.placeBidBtn.disabled = !isAuctionLive || bidAmount < minimumBid;
+            
+            if (bidAmount > 0) {
+                elements.placeBidBtn.textContent = `Place Bid: ${formatCurrency(bidAmount)}`;
+            } else {
+                elements.placeBidBtn.textContent = 'Place Bid';
+            }
+        }
+
+        // ===========================================
+        // BIDDING
+        // ===========================================
+        function handleSubmitBid() {
+            if (!bidder || !socket || !socket.connected) {
+                showToast('Not connected. Please wait...', 'error');
+                return;
+            }
+
+            const bidAmount = parseInt(elements.bidAmountInput.value) || 0;
+            const minimumBid = currentBid + bidIncrement;
+
+            if (bidAmount < minimumBid) {
+                showToast(`Minimum bid is ${formatCurrency(minimumBid)}`, 'error');
+                return;
+            }
+
+            // Submit bid
+            socket.emit('bid:submit', {
+                amount: bidAmount,
+                bidderNumber: bidder.bidderNumber,
+                bidderName: bidder.name
+            });
+
+            // Show pending state
+            elements.placeBidBtn.disabled = true;
+            elements.placeBidBtn.textContent = 'Submitting...';
+        }
+
+        // ===========================================
+        // BID HISTORY
+        // ===========================================
+        function addBidToHistory(amount, bidderName, isOnline, isMyBid) {
+            const item = document.createElement('div');
+            item.className = 'bid-history-item';
+            
+            if (isMyBid) {
+                item.classList.add('bid-history-item--mine');
+            }
+            
+            item.innerHTML = `
+                <div class="bid-history-item__amount">${formatCurrency(amount)}</div>
+                <div class="bid-history-item__bidder">${bidderName}${isOnline ? ' (Online)' : ''}</div>
+                <div class="bid-history-item__time">${new Date().toLocaleTimeString()}</div>
+            `;
+            
+            // Insert at top
+            elements.bidHistoryList.insertBefore(item, elements.bidHistoryList.firstChild);
+            
+            // Keep only last 10
+            while (elements.bidHistoryList.children.length > 10) {
+                elements.bidHistoryList.removeChild(elements.bidHistoryList.lastChild);
+            }
+        }
+
+        function clearBidHistory() {
+            elements.bidHistoryList.innerHTML = '';
+        }
+
+        // ===========================================
+        // TOAST NOTIFICATIONS
+        // ===========================================
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-notification--${type}`;
+            
+            const icon = {
+                'success': '✓',
+                'error': '✗',
+                'warning': '⚠',
+                'info': 'ℹ'
+            }[type] || 'ℹ';
+            
+            toast.innerHTML = `
+                <span class="toast-notification__icon">${icon}</span>
+                <span>${message}</span>
+                <button class="toast-notification__close" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            elements.toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // ===========================================
+        // UTILITIES
+        // ===========================================
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+    </script>
+</body>
+</html>

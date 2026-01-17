@@ -1,0 +1,458 @@
+// ==============================================
+// ADMIN PAGE STYLES
+// ==============================================
+
+@use 'sass:color';
+@use '../variables' as *;
+@use '../mixins' as *;
+
+// Variables
+$admin-sidebar-width: 260px;
+$admin-header-height: 70px;
+
+// ---------------------------------------------
+// Layout
+// ---------------------------------------------
+.admin-body {
+    display: flex;
+    min-height: 100vh;
+    background: $gray-100;
+}
+
+// ---------------------------------------------
+// Sidebar
+// ---------------------------------------------
+.admin-sidebar {
+    width: $admin-sidebar-width;
+    background: $primary-color;
+    color: $white;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+
+    &__header {
+        padding: $spacing-6;
+        border-bottom: 1px solid rgba($white, 0.1);
+    }
+
+    &__logo {
+        font-family: $font-heading;
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        margin: 0;
+    }
+
+    &__nav {
+        flex: 1;
+        padding: $spacing-4 0;
+    }
+
+    &__footer {
+        padding: $spacing-4;
+        border-top: 1px solid rgba($white, 0.1);
+    }
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-3 $spacing-6;
+    color: rgba($white, 0.7);
+    text-decoration: none;
+    transition: all $transition-fast;
+
+    &:hover {
+        background: rgba($white, 0.1);
+        color: $white;
+    }
+
+    &--active {
+        background: rgba($white, 0.15);
+        color: $white;
+        border-left: 3px solid $accent-color;
+    }
+}
+
+// ---------------------------------------------
+// Main Content
+// ---------------------------------------------
+.admin-main {
+    flex: 1;
+    margin-left: $admin-sidebar-width;
+    padding: $spacing-8;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-8;
+
+    h1 {
+        font-family: $font-heading;
+        font-size: $font-size-2xl;
+        color: $gray-800;
+        margin: 0;
+    }
+}
+
+// ---------------------------------------------
+// Stats Cards
+// ---------------------------------------------
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-6;
+    margin-bottom: $spacing-8;
+}
+
+.stat-card {
+    background: $white;
+    border-radius: $radius-lg;
+    padding: $spacing-6;
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+    box-shadow: $shadow-sm;
+
+    &__icon {
+        width: 50px;
+        height: 50px;
+        border-radius: $radius-lg;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: $font-size-2xl;
+
+        &--primary { background: rgba($primary-color, 0.1); }
+        &--success { background: rgba($success-color, 0.1); }
+        &--warning { background: rgba($warning-color, 0.1); }
+    }
+
+    &__value {
+        display: block;
+        font-size: $font-size-2xl;
+        font-weight: $font-weight-bold;
+        color: $gray-800;
+    }
+
+    &__label {
+        font-size: $font-size-sm;
+        color: $gray-500;
+    }
+}
+
+// ---------------------------------------------
+// Admin Card
+// ---------------------------------------------
+.admin-card {
+    background: $white;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    overflow: hidden;
+
+    &__header {
+        padding: $spacing-5 $spacing-6;
+        border-bottom: 1px solid $gray-200;
+
+        h2 {
+            font-size: $font-size-lg;
+            font-weight: $font-weight-semibold;
+            color: $gray-800;
+            margin: 0;
+        }
+    }
+
+    &__body {
+        padding: 0;
+    }
+}
+
+// ---------------------------------------------
+// Loading/Empty States
+// ---------------------------------------------
+.admin-loading,
+.admin-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-12;
+    color: $gray-500;
+    text-align: center;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $gray-200;
+    border-top-color: $primary-color;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: $spacing-4;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+// ---------------------------------------------
+// Table
+// ---------------------------------------------
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+        padding: $spacing-4 $spacing-6;
+        text-align: left;
+        border-bottom: 1px solid $gray-200;
+    }
+
+    th {
+        background: $off-white;
+        font-weight: $font-weight-semibold;
+        font-size: $font-size-xs;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $gray-500;
+    }
+
+    td {
+        font-size: $font-size-base;
+        color: $gray-700;
+    }
+
+    tr:hover {
+        background: $off-white;
+    }
+}
+
+.actions-cell {
+    display: flex;
+    gap: $spacing-2;
+}
+
+// ---------------------------------------------
+// Icon Buttons
+// ---------------------------------------------
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: $gray-100;
+    border-radius: $radius-md;
+    cursor: pointer;
+    color: $gray-500;
+    transition: all $transition-fast;
+
+    &:hover {
+        background: $gray-200;
+        color: $primary-color;
+    }
+
+    &--danger:hover {
+        background: rgba($error-color, 0.1);
+        color: $error-color;
+    }
+}
+
+// ---------------------------------------------
+// Modal
+// ---------------------------------------------
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba($black, 0.5);
+    }
+
+    &__content {
+        position: relative;
+        background: $white;
+        border-radius: $radius-xl;
+        width: 100%;
+        max-width: 540px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: $shadow-xl;
+
+        &--sm {
+            max-width: 400px;
+        }
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-5 $spacing-6;
+        border-bottom: 1px solid $gray-200;
+
+        h2 {
+            font-size: $font-size-xl;
+            font-weight: $font-weight-semibold;
+            margin: 0;
+        }
+    }
+
+    &__close {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: none;
+        font-size: $font-size-2xl;
+        color: $gray-500;
+        cursor: pointer;
+        border-radius: $radius-md;
+
+        &:hover {
+            background: $gray-100;
+        }
+    }
+
+    &__body {
+        padding: $spacing-6;
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: $spacing-3;
+        padding-top: $spacing-6;
+        border-top: 1px solid $gray-200;
+        margin-top: $spacing-4;
+    }
+}
+
+// ---------------------------------------------
+// Form Styles
+// ---------------------------------------------
+.form-group {
+    margin-bottom: $spacing-5;
+
+    label {
+        display: block;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+        color: $gray-700;
+        margin-bottom: $spacing-2;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: $spacing-3 $spacing-4;
+        border: 1px solid $gray-300;
+        border-radius: $radius-md;
+        font-size: $font-size-base;
+        font-family: inherit;
+        transition: border-color $transition-fast, box-shadow $transition-fast;
+
+        &:focus {
+            outline: none;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        }
+    }
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-4;
+}
+
+// ---------------------------------------------
+// Admin Buttons
+// ---------------------------------------------
+.btn--danger {
+    background-color: $error-color;
+    color: $white;
+
+    &:hover {
+        background-color: color.adjust($error-color, $lightness: -10%);
+    }
+}
+
+// ---------------------------------------------
+// Utility
+// ---------------------------------------------
+.text-muted {
+    color: $gray-500;
+    font-size: $font-size-sm;
+}
+
+.text-error {
+    color: $error-color;
+}
+
+// ---------------------------------------------
+// Responsive
+// ---------------------------------------------
+@include max-lg {
+    .admin-sidebar {
+        width: 70px;
+
+        &__logo {
+            display: none;
+        }
+    }
+
+    .admin-nav-link {
+        justify-content: center;
+        padding: $spacing-4;
+
+        span {
+            display: none;
+        }
+    }
+
+    .admin-main {
+        margin-left: 70px;
+    }
+}
+
+@include max-md {
+    .admin-sidebar {
+        display: none;
+    }
+
+    .admin-main {
+        margin-left: 0;
+        padding: $spacing-4;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        gap: $spacing-4;
+        align-items: flex-start;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-table {
+        display: block;
+        overflow-x: auto;
+    }
+}

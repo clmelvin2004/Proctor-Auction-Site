@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clerk Checkout | Almost Heaven Auctions LLC</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <!-- Square Web Payments SDK -->
+    <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+</head>
+<body class="clerk-system">
+    <header class="clerk-header">
+        <div class="clerk-header__brand">
+            <h1>Almost Heaven Auctions</h1>
+            <span class="clerk-header__subtitle">Clerk Checkout System</span>
+        </div>
+        <div class="clerk-header__status">
+            <span id="connection-status" class="status-indicator status-indicator--disconnected">
+                <span class="status-dot"></span>
+                Disconnected
+            </span>
+            <span id="online-bidders" class="online-count">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span id="bidder-count">0</span> Online
+            </span>
+        </div>
+    </header>
+
+    <main class="clerk-main">
+        <!-- Left Panel: Entry Form -->
+        <section class="clerk-panel clerk-panel--entry">
+            <h2 class="clerk-panel__title">Add Item</h2>
+            
+            <form id="item-form" class="item-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lot-number">Lot #</label>
+                        <input type="number" id="lot-number" name="lotNumber" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="hammer-price">Hammer Price ($)</label>
+                        <input type="number" id="hammer-price" name="hammerPrice" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" name="description" placeholder="Item description">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="buyer-number">Buyer #</label>
+                        <input type="number" id="buyer-number" name="buyerNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="buyer-name">Buyer Name</label>
+                        <input type="text" id="buyer-name" name="buyerName" placeholder="Optional">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="is-online" name="isOnline">
+                        <span>Online Bidder</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn--primary btn--full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    Add to Cart
+                </button>
+            </form>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button type="button" id="btn-clear-form" class="btn btn--outline">Clear Form</button>
+            </div>
+        </section>
+
+        <!-- Middle Panel: Cart -->
+        <section class="clerk-panel clerk-panel--cart">
+            <div class="clerk-panel__header">
+                <h2 class="clerk-panel__title">
+                    Cart 
+                    <span id="cart-buyer-number" class="cart-buyer"></span>
+                </h2>
+                <button type="button" id="btn-clear-cart" class="btn btn--sm btn--outline">Clear All</button>
+            </div>
+
+            <div id="cart-items" class="cart-items">
+                <p class="cart-empty">No items in cart</p>
+            </div>
+
+            <div class="cart-totals">
+                <div class="totals-row">
+                    <span>Subtotal (Hammer):</span>
+                    <span id="subtotal-hammer">$0.00</span>
+                </div>
+                <div class="totals-row">
+                    <span>Buyer's Premium (10%):</span>
+                    <span id="buyers-premium">$0.00</span>
+                </div>
+                <div class="totals-row totals-row--card-fee" id="card-fee-row" style="display: none;">
+                    <span>Card Fee (3%):</span>
+                    <span id="card-fee">$0.00</span>
+                </div>
+                <div class="totals-row totals-row--total">
+                    <span>TOTAL:</span>
+                    <span id="grand-total">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Payment Selection -->
+            <div class="payment-selection">
+                <h3>Payment Method</h3>
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="payment-method" value="cash" checked>
+                        <span class="payment-option__box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+                            Cash
+                        </span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment-method" value="card">
+                        <span class="payment-option__box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                            Card (+3%)
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Square Card Form (hidden until card selected) -->
+            <div id="card-form-container" class="card-form-container" style="display: none;">
+                <div id="card-container"></div>
+            </div>
+
+            <!-- Checkout Button -->
+            <button type="button" id="btn-checkout" class="btn btn--accent btn--full btn--lg" disabled>
+                Complete Sale
+            </button>
+        </section>
+
+        <!-- Right Panel: Online Bids Monitor -->
+        <section class="clerk-panel clerk-panel--bids">
+            <h2 class="clerk-panel__title">
+                <span class="pulse-dot"></span>
+                Online Bids
+            </h2>
+
+            <div id="online-bids" class="online-bids">
+                <p class="bids-empty">No pending bids</p>
+            </div>
+
+            <!-- Current Lot Info -->
+            <div class="current-lot-info">
+                <h3>Current Lot</h3>
+                <div id="current-lot-display" class="current-lot">
+                    <p class="no-lot">No lot active</p>
+                </div>
+                <div class="current-lot-actions">
+                    <button type="button" id="btn-set-lot" class="btn btn--sm btn--outline">Set Lot</button>
+                    <button type="button" id="btn-sold" class="btn btn--sm btn--success" disabled>Mark Sold</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Receipt Modal -->
+    <div id="receipt-modal" class="modal" style="display: none;">
+        <div class="modal-content modal-content--receipt">
+            <div class="modal-header">
+                <h2>Receipt</h2>
+                <button type="button" class="modal-close" onclick="closeReceiptModal()">&times;</button>
+            </div>
+            <div id="receipt-content" class="receipt-content">
+                <!-- Receipt will be rendered here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--outline" onclick="printReceipt()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                    Print
+                </button>
+                <button type="button" class="btn btn--primary" onclick="closeReceiptModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Set Lot Modal -->
+    <div id="lot-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Set Current Lot</h2>
+                <button type="button" class="modal-close" onclick="closeLotModal()">&times;</button>
+            </div>
+            <form id="set-lot-form" class="modal-form">
+                <div class="form-group">
+                    <label for="modal-lot-number">Lot Number</label>
+                    <input type="number" id="modal-lot-number" required>
+                </div>
+                <div class="form-group">
+                    <label for="modal-lot-description">Description</label>
+                    <input type="text" id="modal-lot-description" required>
+                </div>
+                <div class="form-group">
+                    <label for="modal-starting-bid">Starting Bid ($)</label>
+                    <input type="number" id="modal-starting-bid" value="0" step="1">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--outline" onclick="closeLotModal()">Cancel</button>
+                    <button type="submit" class="btn btn--primary">Set Lot</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../js/clerk-checkout.js"></script>
+</body>
+</html>

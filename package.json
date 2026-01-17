@@ -1,0 +1,41 @@
+{
+  "name": "almost-heaven-auctions",
+  "version": "1.0.0",
+  "description": "Almost Heaven Auctions LLC - [insert location here] local auction site with Square payment integration",
+  "main": "server/index.js",
+  "scripts": {
+    "sass": "sass scss/main.scss css/main.css",
+    "sass:watch": "sass scss/main.scss css/main.css --watch",
+    "sass:prod": "sass scss/main.scss css/main.css --style compressed",
+    "serve": "live-server --port=3000",
+    "dev:frontend": "concurrently \"npm run sass:watch\" \"npm run serve\"",
+    "dev:server": "node server/index.js",
+    "dev": "concurrently \"npm run sass:watch\" \"node server/index.js\"",
+    "build": "npm run sass:prod",
+    "start": "node server/index.js"
+  },
+  "keywords": [
+    "auction",
+    "bidding",
+    "square",
+    "ecommerce",
+    "websocket",
+    "live-auction"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "square": "^35.1.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "live-server": "^1.2.2",
+    "sass": "^1.69.5"
+  }
+}

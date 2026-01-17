@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Almost Heaven Auctions LLC - [insert location here]'s local auction house. Join our live auctions online or in person. Estate sales, antiques, collectibles & more.">
+    
+    <title>Home | Almost Heaven Auctions LLC</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+    <!-- Header Placeholder (loaded dynamically) -->
+    <div id="header-placeholder"></div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero__content">
+                <h1 class="hero__title">Live Auctions in <span>[insert location here]</span></h1>
+                <p class="hero__subtitle">Join us in person or bid online from anywhere!</p>
+                
+                <div class="hero__buttons">
+                    <a href="/pages/live-auction.html" class="btn btn--primary btn--xl">
+                        <span class="btn__live-dot"></span>
+                        Join Live Auction
+                    </a>
+                    <a href="/pages/calendar.html" class="btn btn--outline-light btn--lg">View Schedule</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Auction Banner (shows when auction is live) -->
+        <section id="live-banner" class="live-banner" style="display: none;">
+            <div class="live-banner__content">
+                <div class="live-banner__status">
+                    <span class="live-banner__dot"></span>
+                    <span class="live-banner__text">AUCTION IS LIVE NOW</span>
+                </div>
+                <div class="live-banner__info">
+                    <span id="live-lot-info">Bidding in progress</span>
+                </div>
+                <a href="/pages/live-auction.html" class="btn btn--white btn--lg">Join Now</a>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works">
+            <div class="how-it-works__container">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Bidding with us is easy, whether you're here in person or joining from home</p>
+                
+                <div class="how-it-works__grid">
+                    <div class="step-card">
+                        <div class="step-card__number">1</div>
+                        <div class="step-card__icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M8 2v4"/>
+                                <path d="M16 2v4"/>
+                                <rect width="18" height="18" x="3" y="4" rx="2"/>
+                                <path d="M3 10h18"/>
+                                <path d="M9 16h6"/>
+                            </svg>
+                        </div>
+                        <h3 class="step-card__title">Check the Schedule</h3>
+                        <p class="step-card__text">View our auction calendar to see what's coming up. We hold auctions weekly with previews available beforehand.</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-card__number">2</div>
+                        <div class="step-card__icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <h3 class="step-card__title">Register to Bid</h3>
+                        <p class="step-card__text">Get a bidder number at our location or register online when you join the live auction. It only takes a minute.</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-card__number">3</div>
+                        <div class="step-card__icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polygon points="10 8 16 12 10 16 10 8"/>
+                            </svg>
+                        </div>
+                        <h3 class="step-card__title">Join the Auction</h3>
+                        <p class="step-card__text">Come in person or click "Join Live Auction" when we go live. Bid in real-time alongside our in-house bidders.</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-card__number">4</div>
+                        <div class="step-card__icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+                                <path d="M3 6h18"/>
+                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                        </div>
+                        <h3 class="step-card__title">Win & Pick Up</h3>
+                        <p class="step-card__text">Won something? Pay at checkout (10% buyer's premium applies) and pick up your items at our Charleston location.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Info Cards Section -->
+        <section class="info-section">
+            <div class="info-section__container">
+                <div class="info-card">
+                    <div class="info-card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                    <h3>Local Pickup</h3>
+                    <p>All items picked up at our [insert location here] location.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect width="20" height="14" x="2" y="5" rx="2"/>
+                            <line x1="2" x2="22" y1="10" y2="10"/>
+                        </svg>
+                    </div>
+                    <h3>Easy Payment</h3>
+                    <p>Pay with credit/debit card or cash at checkout. 10% buyer's premium on all items.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-card__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m22 8-6 4 6 4V8Z"/>
+                            <rect width="14" height="12" x="2" y="6" rx="2" ry="2"/>
+                        </svg>
+                    </div>
+                    <h3>Bid Online</h3>
+                    <p>Can't make it in person? Join our live auctions online and bid in real-time from anywhere.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Auction Section -->
+        <section class="next-auction" id="next-auction-section">
+            <div class="next-auction__container">
+                <!-- Loading State -->
+                <div id="next-auction-loading" class="next-auction__loading">
+                    <div class="spinner"></div>
+                    <p>Loading next auction...</p>
+                </div>
+
+                <!-- No Auction State -->
+                <div id="next-auction-empty" class="next-auction__empty" style="display: none;">
+                    <h2>Stay Tuned!</h2>
+                    <p>No upcoming auctions scheduled at the moment. Check back soon or contact us for information.</p>
+                    <a href="/pages/contact.html" class="btn btn--primary btn--lg">Contact Us</a>
+                </div>
+
+                <!-- Auction Content (populated by JS) -->
+                <div id="next-auction-content" style="display: none;">
+                    <div class="next-auction__info">
+                        <span class="next-auction__label">Next Auction</span>
+                        <h2 class="next-auction__title" id="next-title"></h2>
+                        <div class="next-auction__details">
+                            <div class="next-auction__detail">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M8 2v4"/>
+                                    <path d="M16 2v4"/>
+                                    <rect width="18" height="18" x="3" y="4" rx="2"/>
+                                    <path d="M3 10h18"/>
+                                </svg>
+                                <span id="next-date"></span>
+                            </div>
+                            <div class="next-auction__detail">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                <span id="next-time"></span>
+                            </div>
+                            <div class="next-auction__detail" id="next-preview-row" style="display: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <span id="next-preview"></span>
+                            </div>
+                            <div class="next-auction__detail">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                <span id="next-location">[insert location here]</span>
+                            </div>
+                        </div>
+                        <p class="next-auction__description" id="next-description"></p>
+                        <div class="next-auction__actions">
+                            <a href="/pages/calendar.html" class="btn btn--primary btn--lg">View Full Schedule</a>
+                        </div>
+                    </div>
+                    <div class="next-auction__countdown">
+                        <span class="next-auction__countdown-label">Auction Starts In</span>
+                        <div class="countdown" id="countdown">
+                            <div class="countdown__item">
+                                <span class="countdown__value" id="countdown-days">0</span>
+                                <span class="countdown__label">Days</span>
+                            </div>
+                            <div class="countdown__item">
+                                <span class="countdown__value" id="countdown-hours">0</span>
+                                <span class="countdown__label">Hours</span>
+                            </div>
+                            <div class="countdown__item">
+                                <span class="countdown__value" id="countdown-minutes">0</span>
+                                <span class="countdown__label">Minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Placeholder (loaded dynamically) -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="./components/addComponents.js"></script>
+    <script src="./js/main.js"></script>
+    <script>
+        // ===========================================
+        // HOMEPAGE LOGIC
+        // ===========================================
+
+        let nextAuctionDate = null;
+
+        // Load next auction from API
+        async function loadNextAuction() {
+            const loadingEl = document.getElementById('next-auction-loading');
+            const emptyEl = document.getElementById('next-auction-empty');
+            const contentEl = document.getElementById('next-auction-content');
+
+            try {
+                const response = await fetch('/api/schedule/next');
+                const result = await response.json();
+
+                loadingEl.style.display = 'none';
+
+                if (!result.success || !result.data) {
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+
+                const auction = result.data;
+                
+                // Populate content
+                document.getElementById('next-title').textContent = auction.title;
+                document.getElementById('next-description').textContent = auction.description || '';
+                document.getElementById('next-location').textContent = auction.location || '[insert location here]';
+
+                // Format date
+                const date = new Date(auction.auction_date + 'T00:00:00');
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                document.getElementById('next-date').textContent = formattedDate;
+
+                // Format start time
+                document.getElementById('next-time').textContent = 'Starts at ' + formatTime(auction.start_time);
+
+                // Preview time (if exists)
+                if (auction.preview_time) {
+                    document.getElementById('next-preview-row').style.display = 'flex';
+                    document.getElementById('next-preview').textContent = 'Preview at ' + formatTime(auction.preview_time);
+                }
+
+                // Set countdown target
+                nextAuctionDate = new Date(auction.auction_date + 'T' + auction.start_time);
+                updateCountdown();
+
+                contentEl.style.display = '';
+
+            } catch (error) {
+                console.error('Error loading next auction:', error);
+                loadingEl.style.display = 'none';
+                emptyEl.style.display = 'block';
+            }
+        }
+
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
+        }
+
+        // Countdown Timer
+        function updateCountdown() {
+            if (!nextAuctionDate) return;
+            
+            const now = new Date();
+            const diff = nextAuctionDate - now;
+            
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                document.getElementById('countdown-days').textContent = days;
+                document.getElementById('countdown-hours').textContent = hours;
+                document.getElementById('countdown-minutes').textContent = minutes;
+            } else {
+                // Auction has started or passed
+                document.getElementById('countdown-days').textContent = '0';
+                document.getElementById('countdown-hours').textContent = '0';
+                document.getElementById('countdown-minutes').textContent = '0';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNextAuction();
+            setInterval(updateCountdown, 60000);
+        });
+
+        // Check if auction is live (connect to socket to check)
+        if (typeof io !== 'undefined') {
+            const socket = io();
+            socket.on('auction:state', (state) => {
+                const liveBanner = document.getElementById('live-banner');
+                if (state.isLive && liveBanner) {
+                    liveBanner.style.display = 'block';
+                    if (state.currentLot) {
+                        document.getElementById('live-lot-info').textContent = 
+                            `Now selling: Lot ${state.currentLot.number}`;
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

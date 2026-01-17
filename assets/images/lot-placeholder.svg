@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#f7fafc"/>
+  <rect x="125" y="75" width="150" height="150" rx="8" fill="#e2e8f0"/>
+  <circle cx="170" cy="120" r="20" fill="#cbd5e0"/>
+  <path d="M125 200 L200 140 L275 200 L275 225 L125 225 Z" fill="#cbd5e0"/>
+  <text x="200" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#a0aec0">Lot Image Placeholder</text>
+</svg>

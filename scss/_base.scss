@@ -1,0 +1,284 @@
+// ==============================================
+// BASE STYLES - Proctor Auction Site
+// ==============================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ---------------------------------------------
+// Reset & Box Sizing
+// ---------------------------------------------
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// ---------------------------------------------
+// Root & HTML
+// ---------------------------------------------
+:root {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ---------------------------------------------
+// Body
+// ---------------------------------------------
+body {
+  font-family: $font-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  color: $gray-700;
+  background-color: $off-white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Main content should grow to push footer down
+main {
+  flex: 1;
+}
+
+// ---------------------------------------------
+// Typography
+// ---------------------------------------------
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-heading;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $gray-800;
+  margin-bottom: $spacing-4;
+}
+
+h1 {
+  font-size: $font-size-4xl;
+
+  @include lg {
+    font-size: $font-size-5xl;
+  }
+}
+
+h2 {
+  font-size: $font-size-3xl;
+
+  @include lg {
+    font-size: $font-size-4xl;
+  }
+}
+
+h3 {
+  font-size: $font-size-2xl;
+
+  @include lg {
+    font-size: $font-size-3xl;
+  }
+}
+
+h4 {
+  font-size: $font-size-xl;
+
+  @include lg {
+    font-size: $font-size-2xl;
+  }
+}
+
+h5 {
+  font-size: $font-size-lg;
+}
+
+h6 {
+  font-size: $font-size-base;
+}
+
+p {
+  margin-bottom: $spacing-4;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $primary-light;
+  }
+}
+
+strong, b {
+  font-weight: $font-weight-semibold;
+}
+
+small {
+  font-size: $font-size-sm;
+}
+
+// ---------------------------------------------
+// Lists
+// ---------------------------------------------
+ul, ol {
+  list-style: none;
+}
+
+// ---------------------------------------------
+// Images & Media
+// ---------------------------------------------
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+img {
+  object-fit: cover;
+}
+
+// ---------------------------------------------
+// Form Elements
+// ---------------------------------------------
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, textarea, select {
+  @include input-base;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+label {
+  display: block;
+  font-weight: $font-weight-medium;
+  margin-bottom: $spacing-2;
+  color: $gray-700;
+}
+
+// ---------------------------------------------
+// Tables
+// ---------------------------------------------
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+th, td {
+  padding: $spacing-3 $spacing-4;
+  text-align: left;
+  border-bottom: $border-width solid $border-color;
+}
+
+th {
+  font-weight: $font-weight-semibold;
+  background-color: $gray-100;
+}
+
+// ---------------------------------------------
+// Utility Classes
+// ---------------------------------------------
+
+// Container
+.container {
+  @include container;
+}
+
+// Text alignment
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+// Font weights
+.font-normal { font-weight: $font-weight-normal; }
+.font-medium { font-weight: $font-weight-medium; }
+.font-semibold { font-weight: $font-weight-semibold; }
+.font-bold { font-weight: $font-weight-bold; }
+
+// Text colors
+.text-primary { color: $primary-color; }
+.text-accent { color: $accent-color; }
+.text-muted { color: $gray-500; }
+.text-success { color: $success-color; }
+.text-warning { color: $warning-color; }
+.text-error { color: $error-color; }
+
+// Background colors
+.bg-primary { background-color: $primary-color; }
+.bg-accent { background-color: $accent-color; }
+.bg-white { background-color: $white; }
+.bg-off-white { background-color: $off-white; }
+.bg-gray { background-color: $gray-100; }
+
+// Display
+.hidden { display: none; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+.flex { display: flex; }
+.grid { display: grid; }
+
+// Flexbox utilities
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-col { flex-direction: column; }
+.gap-1 { gap: $spacing-1; }
+.gap-2 { gap: $spacing-2; }
+.gap-4 { gap: $spacing-4; }
+.gap-6 { gap: $spacing-6; }
+.gap-8 { gap: $spacing-8; }
+
+// Spacing utilities
+.mt-auto { margin-top: auto; }
+.mb-0 { margin-bottom: 0; }
+.mb-4 { margin-bottom: $spacing-4; }
+.mb-8 { margin-bottom: $spacing-8; }
+.py-4 { padding-top: $spacing-4; padding-bottom: $spacing-4; }
+.py-8 { padding-top: $spacing-8; padding-bottom: $spacing-8; }
+.px-4 { padding-left: $spacing-4; padding-right: $spacing-4; }
+
+// Width utilities
+.w-full { width: 100%; }
+.max-w-sm { max-width: 24rem; }
+.max-w-md { max-width: 28rem; }
+.max-w-lg { max-width: 32rem; }
+.max-w-xl { max-width: 36rem; }
+
+// Border radius
+.rounded { border-radius: $radius-md; }
+.rounded-lg { border-radius: $radius-lg; }
+.rounded-xl { border-radius: $radius-xl; }
+.rounded-full { border-radius: $radius-full; }
+
+// Shadows
+.shadow { box-shadow: $shadow-md; }
+.shadow-lg { box-shadow: $shadow-lg; }
+
+// Visually hidden (for accessibility)
+.sr-only {
+  @include visually-hidden;
+}

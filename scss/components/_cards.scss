@@ -1,0 +1,377 @@
+// ==============================================
+// CARDS COMPONENT (Auction Lots, Categories, etc.)
+// ==============================================
+
+@use '../variables' as *;
+@use '../mixins' as *;
+
+// ---------------------------------------------
+// Base Card
+// ---------------------------------------------
+.card {
+  @include card;
+  display: flex;
+  flex-direction: column;
+}
+
+// ---------------------------------------------
+// Auction Lot Card
+// ---------------------------------------------
+.lot-card {
+  @include card;
+  @include card-hover-lift;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+
+  &__image {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background-color: $gray-200;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform $transition-normal;
+    }
+
+    // Placeholder for missing images
+    &--placeholder {
+      @include flex-center;
+      background-color: $gray-100;
+      color: $gray-400;
+
+      svg, i {
+        width: 48px;
+        height: 48px;
+      }
+    }
+  }
+
+  &:hover &__image img {
+    transform: scale(1.05);
+  }
+
+  &__badge {
+    position: absolute;
+    top: $spacing-3;
+    left: $spacing-3;
+    padding: $spacing-1 $spacing-3;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    border-radius: $radius-md;
+
+    &--live {
+      background-color: $error-color;
+      color: $white;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    &--closing {
+      background-color: $warning-color;
+      color: $gray-800;
+    }
+
+    &--new {
+      background-color: $success-color;
+      color: $white;
+    }
+
+    &--featured {
+      background-color: $accent-color;
+      color: $white;
+    }
+  }
+
+  &__favorite {
+    position: absolute;
+    top: $spacing-3;
+    right: $spacing-3;
+    @include flex-center;
+    width: 36px;
+    height: 36px;
+    background-color: rgba($white, 0.9);
+    border-radius: $radius-full;
+    color: $gray-400;
+    transition: all $transition-fast;
+
+    &:hover,
+    &.active {
+      color: $error-color;
+      background-color: $white;
+    }
+
+    &.active {
+      svg, i {
+        fill: currentColor;
+      }
+    }
+  }
+
+  &__content {
+    padding: $spacing-4;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__lot-number {
+    font-size: $font-size-xs;
+    color: $gray-500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: $spacing-1;
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $gray-800;
+    margin-bottom: $spacing-2;
+    @include truncate(2);
+  }
+
+  &__auction {
+    font-size: $font-size-sm;
+    color: $gray-500;
+    margin-bottom: $spacing-3;
+    @include truncate(1);
+  }
+
+  &__bid-info {
+    margin-top: auto;
+    padding-top: $spacing-3;
+    border-top: 1px solid $gray-100;
+  }
+
+  &__current-bid {
+    @include flex-between;
+    margin-bottom: $spacing-2;
+
+    span:first-child {
+      font-size: $font-size-sm;
+      color: $gray-500;
+    }
+
+    span:last-child {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-bold;
+      color: $primary-color;
+    }
+  }
+
+  &__time-left {
+    @include flex-start;
+    gap: $spacing-2;
+    font-size: $font-size-sm;
+    color: $gray-600;
+
+    svg, i {
+      width: 16px;
+      height: 16px;
+      color: $gray-400;
+    }
+
+    &--urgent {
+      color: $error-color;
+      font-weight: $font-weight-medium;
+
+      svg, i {
+        color: $error-color;
+      }
+    }
+  }
+
+  &__bids-count {
+    font-size: $font-size-xs;
+    color: $gray-500;
+    margin-top: $spacing-2;
+  }
+}
+
+// ---------------------------------------------
+// Category Card
+// ---------------------------------------------
+.category-card {
+  @include card;
+  @include card-hover-lift;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  cursor: pointer;
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition-slow;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba($black, 0.8), rgba($black, 0.2));
+    @include flex-column;
+    justify-content: flex-end;
+    padding: $spacing-6;
+    color: $white;
+  }
+
+  &:hover &__image {
+    transform: scale(1.1);
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-1;
+  }
+
+  &__count {
+    font-size: $font-size-sm;
+    color: $gray-300;
+  }
+}
+
+// ---------------------------------------------
+// Auction Card (Event Card)
+// ---------------------------------------------
+.auction-card {
+  @include card;
+  display: flex;
+  flex-direction: column;
+
+  @include md {
+    flex-direction: row;
+  }
+
+  &__image {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: $gray-200;
+
+    @include md {
+      width: 280px;
+      flex-shrink: 0;
+      aspect-ratio: auto;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__content {
+    padding: $spacing-5;
+    flex: 1;
+    @include flex-column;
+  }
+
+  &__date {
+    @include flex-start;
+    gap: $spacing-2;
+    font-size: $font-size-sm;
+    color: $accent-color;
+    font-weight: $font-weight-medium;
+    margin-bottom: $spacing-2;
+
+    svg, i {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $gray-800;
+    margin-bottom: $spacing-2;
+  }
+
+  &__auctioneer {
+    font-size: $font-size-sm;
+    color: $gray-500;
+    margin-bottom: $spacing-3;
+  }
+
+  &__description {
+    font-size: $font-size-sm;
+    color: $gray-600;
+    @include truncate(2);
+    margin-bottom: $spacing-4;
+  }
+
+  &__meta {
+    @include flex-start;
+    flex-wrap: wrap;
+    gap: $spacing-4;
+    margin-top: auto;
+    padding-top: $spacing-4;
+    border-top: 1px solid $gray-100;
+  }
+
+  &__meta-item {
+    @include flex-start;
+    gap: $spacing-2;
+    font-size: $font-size-sm;
+    color: $gray-500;
+
+    svg, i {
+      width: 16px;
+      height: 16px;
+      color: $gray-400;
+    }
+  }
+
+  &__type {
+    display: inline-flex;
+    padding: $spacing-1 $spacing-2;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    background-color: $gray-100;
+    color: $gray-600;
+    border-radius: $radius-sm;
+  }
+}
+
+// ---------------------------------------------
+// Stats Card
+// ---------------------------------------------
+.stats-card {
+  @include card;
+  padding: $spacing-6;
+  text-align: center;
+
+  &__icon {
+    @include flex-center;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto $spacing-4;
+    background-color: rgba($primary-color, 0.1);
+    border-radius: $radius-full;
+    color: $primary-color;
+
+    svg, i {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  &__number {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: $gray-800;
+    margin-bottom: $spacing-1;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    color: $gray-500;
+  }
+}

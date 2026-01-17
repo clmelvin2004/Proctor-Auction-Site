@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Schedule | Admin - Almost Heaven Auctions</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../css/main.css">
+</head>
+<body class="admin-body">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar__header">
+            <h1 class="admin-sidebar__logo">AHA Admin</h1>
+        </div>
+        <nav class="admin-sidebar__nav">
+            <a href="schedule.html" class="admin-nav-link admin-nav-link--active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Schedule
+            </a>
+            <a href="../clerk.html" class="admin-nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Clerk Station
+            </a>
+            <a href="../live-auction.html" class="admin-nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                </svg>
+                Live Auction
+            </a>
+        </nav>
+        <div class="admin-sidebar__footer">
+            <a href="../../index.html" class="admin-nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Back to Site
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <h1>Auction Schedule</h1>
+            <button class="btn btn--primary" onclick="openModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add Auction
+            </button>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="admin-stats">
+            <div class="stat-card">
+                <div class="stat-card__icon stat-card__icon--primary">📅</div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" id="total-auctions">-</span>
+                    <span class="stat-card__label">Total Scheduled</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card__icon stat-card__icon--success">🔜</div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" id="upcoming-auctions">-</span>
+                    <span class="stat-card__label">Upcoming</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card__icon stat-card__icon--warning">📦</div>
+                <div class="stat-card__content">
+                    <span class="stat-card__value" id="next-auction">-</span>
+                    <span class="stat-card__label">Next Auction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auctions Table -->
+        <div class="admin-card">
+            <div class="admin-card__header">
+                <h2>All Scheduled Auctions</h2>
+            </div>
+            <div class="admin-card__body">
+                <div id="loading" class="admin-loading">
+                    <div class="spinner"></div>
+                    <p>Loading auctions...</p>
+                </div>
+                <div id="empty" class="admin-empty" style="display: none;">
+                    <p>No auctions scheduled yet.</p>
+                    <button class="btn btn--primary" onclick="openModal()">Add Your First Auction</button>
+                </div>
+                <table id="auctions-table" class="admin-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Title</th>
+                            <th>Time</th>
+                            <th>Preview</th>
+                            <th>Location</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auctions-body">
+                        <!-- Rows inserted by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div id="auction-modal" class="modal" style="display: none;">
+        <div class="modal__backdrop" onclick="closeModal()"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h2 id="modal-title">Add Auction</h2>
+                <button class="modal__close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="auction-form" class="modal__body">
+                <input type="hidden" id="auction-id">
+                
+                <div class="form-group">
+                    <label for="title">Auction Title *</label>
+                    <input type="text" id="title" name="title" required placeholder="e.g., Estate Sale - Johnson Property">
+                </div>
+
+                <div class="form-group">
+                    <label for="auction_date">Date *</label>
+                    <input type="date" id="auction_date" name="auction_date" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start_time">Start Time *</label>
+                        <input type="time" id="start_time" name="start_time" required value="10:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="preview_time">Preview Time</label>
+                        <input type="time" id="preview_time" name="preview_time" value="09:00">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" placeholder="[insert location here] (default if blank)">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Brief description of items being auctioned..."></textarea>
+                </div>
+
+                <div class="modal__footer">
+                    <button type="button" class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn--primary" id="submit-btn">Save Auction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal" style="display: none;">
+        <div class="modal__backdrop" onclick="closeDeleteModal()"></div>
+        <div class="modal__content modal__content--sm">
+            <div class="modal__header">
+                <h2>Delete Auction</h2>
+                <button class="modal__close" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal__body">
+                <p>Are you sure you want to delete "<strong id="delete-title"></strong>"?</p>
+                <p class="text-muted">This action cannot be undone.</p>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn--danger" id="confirm-delete-btn" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===========================================
+        // ADMIN SCHEDULE MANAGEMENT
+        // ===========================================
+
+        let auctions = [];
+        let editingId = null;
+        let deletingId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAuctions();
+            document.getElementById('auction-form').addEventListener('submit', handleSubmit);
+        });
+
+        // ----- API Functions -----
+
+        async function loadAuctions() {
+            const loadingEl = document.getElementById('loading');
+            const emptyEl = document.getElementById('empty');
+            const tableEl = document.getElementById('auctions-table');
+
+            loadingEl.style.display = 'flex';
+            emptyEl.style.display = 'none';
+            tableEl.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/schedule');
+                const result = await response.json();
+
+                loadingEl.style.display = 'none';
+
+                if (!result.success) throw new Error(result.error);
+
+                auctions = result.data || [];
+                updateStats();
+
+                if (auctions.length === 0) {
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+
+                renderTable();
+                tableEl.style.display = 'table';
+
+            } catch (error) {
+                console.error('Error loading auctions:', error);
+                loadingEl.innerHTML = '<p class="text-error">Failed to load auctions. Please refresh.</p>';
+            }
+        }
+
+        async function saveAuction(data) {
+            const url = editingId ? `/api/schedule/${editingId}` : '/api/schedule';
+            const method = editingId ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+            return result;
+        }
+
+        async function deleteAuction(id) {
+            const response = await fetch(`/api/schedule/${id}`, { method: 'DELETE' });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+            return result;
+        }
+
+        // Parse date string (YYYY-MM-DD) as local date without timezone shift
+        function parseLocalDate(dateStr) {
+            const [year, month, day] = dateStr.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        // ----- UI Functions -----
+
+        function renderTable() {
+            const tbody = document.getElementById('auctions-body');
+            tbody.innerHTML = auctions.map(auction => {
+                const date = parseLocalDate(auction.auction_date);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+
+                return `
+                    <tr>
+                        <td><strong>${formattedDate}</strong></td>
+                        <td>${escapeHtml(auction.title)}</td>
+                        <td>${formatTime(auction.start_time)}</td>
+                        <td>${auction.preview_time ? formatTime(auction.preview_time) : '-'}</td>
+                        <td>${escapeHtml(auction.location || '[insert location here]')}</td>
+                        <td class="actions-cell">
+                            <button class="btn-icon" onclick="editAuction(${auction.id})" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                            <button class="btn-icon btn-icon--danger" onclick="openDeleteModal(${auction.id}, '${escapeHtml(auction.title)}')" title="Delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const upcoming = auctions.filter(a => a.auction_date >= today);
+
+            document.getElementById('total-auctions').textContent = auctions.length;
+            document.getElementById('upcoming-auctions').textContent = upcoming.length;
+
+            if (upcoming.length > 0) {
+                const next = upcoming.sort((a, b) => a.auction_date.localeCompare(b.auction_date))[0];
+                const nextDate = parseLocalDate(next.auction_date);
+                document.getElementById('next-auction').textContent = nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            } else {
+                document.getElementById('next-auction').textContent = 'None';
+            }
+        }
+
+        // ----- Modal Functions -----
+
+        function openModal(auction = null) {
+            editingId = auction ? auction.id : null;
+            document.getElementById('modal-title').textContent = auction ? 'Edit Auction' : 'Add Auction';
+            document.getElementById('submit-btn').textContent = auction ? 'Update Auction' : 'Save Auction';
+
+            const form = document.getElementById('auction-form');
+            form.reset();
+
+            if (auction) {
+                document.getElementById('auction-id').value = auction.id;
+                document.getElementById('title').value = auction.title;
+                document.getElementById('auction_date').value = auction.auction_date;
+                document.getElementById('start_time').value = auction.start_time;
+                document.getElementById('preview_time').value = auction.preview_time || '';
+                document.getElementById('location').value = auction.location || '';
+                document.getElementById('description').value = auction.description || '';
+            }
+
+            document.getElementById('auction-modal').style.display = 'flex';
+            document.getElementById('title').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('auction-modal').style.display = 'none';
+            editingId = null;
+        }
+
+        function editAuction(id) {
+            const auction = auctions.find(a => a.id === id);
+            if (auction) openModal(auction);
+        }
+
+        function openDeleteModal(id, title) {
+            deletingId = id;
+            document.getElementById('delete-title').textContent = title;
+            document.getElementById('delete-modal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').style.display = 'none';
+            deletingId = null;
+        }
+
+        async function confirmDelete() {
+            if (!deletingId) return;
+
+            const btn = document.getElementById('confirm-delete-btn');
+            btn.disabled = true;
+            btn.textContent = 'Deleting...';
+
+            try {
+                await deleteAuction(deletingId);
+                closeDeleteModal();
+                loadAuctions();
+            } catch (error) {
+                alert('Failed to delete auction: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Delete';
+            }
+        }
+
+        // ----- Form Handling -----
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            const data = {
+                title: document.getElementById('title').value,
+                auction_date: document.getElementById('auction_date').value,
+                start_time: document.getElementById('start_time').value,
+                preview_time: document.getElementById('preview_time').value || null,
+                location: document.getElementById('location').value || null,
+                description: document.getElementById('description').value || null
+            };
+
+            try {
+                await saveAuction(data);
+                closeModal();
+                loadAuctions();
+            } catch (error) {
+                alert('Failed to save auction: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = editingId ? 'Update Auction' : 'Save Auction';
+            }
+        }
+
+        // ----- Helpers -----
+
+        function formatTime(timeString) {
+            if (!timeString) return '';
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Close modals on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeDeleteModal();
+            }
+        });
+    </script>
+</body>
+</html>

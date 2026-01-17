@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="48" viewBox="0 0 220 48">
+  <!-- Mountain/Heaven Icon -->
+  <g transform="translate(0, 4)">
+    <path d="M5 36 L20 10 L35 36 Z" fill="#1a365d"/>
+    <path d="M15 36 L25 20 L35 36 Z" fill="#2c5282"/>
+    <path d="M10 18 Q20 14 30 18" stroke="#dd6b20" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="45" y="22" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a365d">Almost Heaven</text>
+  <text x="45" y="38" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#dd6b20">AUCTIONS</text>
+</svg>

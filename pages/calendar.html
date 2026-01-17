@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Auction schedule for Almost Heaven Auctions - View upcoming auctions in [insert location here]">
+    
+    <title>Auction Schedule | Almost Heaven Auctions LLC</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <!-- Header Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <main class="schedule-page">
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="page-header__container">
+                <h1 class="page-header__title">Auction Schedule</h1>
+                <p class="page-header__subtitle">View all upcoming auctions. Join us in person or bid online!</p>
+            </div>
+        </section>
+
+        <!-- Schedule Content -->
+        <section class="schedule-section">
+            <div class="schedule-container">
+                <!-- Loading State -->
+                <div id="loading" class="schedule-loading">
+                    <div class="spinner"></div>
+                    <p>Loading auction schedule...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="error" class="schedule-error" style="display: none;">
+                    <div class="schedule-error__icon">⚠️</div>
+                    <h2>Unable to Load Schedule</h2>
+                    <p>Please try again later or contact us for auction information.</p>
+                    <button onclick="loadSchedule()" class="btn btn--primary">Try Again</button>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty" class="schedule-empty" style="display: none;">
+                    <div class="schedule-empty__icon">📅</div>
+                    <h2>No Upcoming Auctions</h2>
+                    <p>Check back soon for our next auction schedule!</p>
+                    <a href="contact.html" class="btn btn--primary">Contact Us</a>
+                </div>
+
+                <!-- Schedule List -->
+                <div id="schedule-list" class="schedule-list" style="display: none;">
+                    <!-- Auction cards will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Info Section -->
+        <section class="schedule-info">
+            <div class="schedule-info__container">
+                <div class="info-box">
+                    <h3>Location</h3>
+                    <p>All auctions held at our [insert location here] location unless otherwise noted.</p>
+                </div>
+                <div class="info-box">
+                    <h3>Previews</h3>
+                    <p>Preview times are listed for each auction. Come early to inspect items before bidding.</p>
+                </div>
+                <div class="info-box">
+                    <h3>Buyer's Premium</h3>
+                    <p>10% buyer's premium applies to all purchases. Additional 3% for credit card payments.</p>
+                </div>
+                <div class="info-box">
+                    <h3>Online Bidding</h3>
+                    <p>Can't attend in person? Join our live auctions online and bid in real-time!</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="../components/addComponents.js"></script>
+    <script>
+        // ===========================================
+        // SCHEDULE PAGE LOGIC
+        // ===========================================
+
+        document.addEventListener('DOMContentLoaded', loadSchedule);
+
+        async function loadSchedule() {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const emptyEl = document.getElementById('empty');
+            const listEl = document.getElementById('schedule-list');
+
+            // Show loading
+            loadingEl.style.display = 'flex';
+            errorEl.style.display = 'none';
+            emptyEl.style.display = 'none';
+            listEl.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/schedule');
+                const result = await response.json();
+
+                loadingEl.style.display = 'none';
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to load schedule');
+                }
+
+                if (!result.data || result.data.length === 0) {
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+
+                // Render schedule
+                listEl.innerHTML = result.data.map(auction => renderAuctionCard(auction)).join('');
+                listEl.style.display = 'grid';
+
+            } catch (error) {
+                console.error('Error loading schedule:', error);
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function renderAuctionCard(auction) {
+            const date = new Date(auction.auction_date + 'T' + auction.start_time);
+            const formattedDate = date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            const formattedTime = formatTime(auction.start_time);
+            const previewTime = auction.preview_time ? formatTime(auction.preview_time) : null;
+
+            return `
+                <article class="auction-card">
+                    <div class="auction-card__header">
+                        <span class="auction-card__date">${formattedDate}</span>
+                    </div>
+                    <div class="auction-card__body">
+                        <h2 class="auction-card__title">${escapeHtml(auction.title)}</h2>
+                        <p class="auction-card__description">${escapeHtml(auction.description || '')}</p>
+                        
+                        <div class="auction-card__details">
+                            <div class="auction-card__detail">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                <span>Starts at ${formattedTime}</span>
+                            </div>
+                            ${previewTime ? `
+                            <div class="auction-card__detail">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <span>Preview at ${previewTime}</span>
+                            </div>
+                            ` : ''}
+                            <div class="auction-card__detail">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                <span>${escapeHtml(auction.location || '[insert location here]')}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="auction-card__footer">
+                        <a href="live-auction.html" class="btn btn--primary">
+                            <span class="btn__live-dot"></span>
+                            Join Live Auction
+                        </a>
+                    </div>
+                </article>
+            `;
+        }
+
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
