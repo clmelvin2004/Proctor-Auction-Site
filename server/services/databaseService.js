@@ -20,7 +20,7 @@ function initDatabase() {
     // Create tables
     createTables();
     
-    console.log('📦 Database initialized at:', dbPath);
+    console.log('Database initialized at:', dbPath);
     
     return db;
 }
